@@ -14,7 +14,6 @@ interface Props {
 export const MovieItem = ({ data }: Props) => {
   const { title, name, backdrop_path } = data
   const [like, setLike] = useState(false)
-  const [saved, setSaved] = useState(false)
   const { user } = UserAuth()
 
   const movieID = doc(db, 'users', `${user?.email}`);
@@ -22,7 +21,6 @@ export const MovieItem = ({ data }: Props) => {
   const handleSaveShow = async () => {
     if (user?.email) {
       setLike(!like)
-      setSaved(true)
       await updateDoc(movieID, {
         savedShows: arrayUnion({
           id: data.id,

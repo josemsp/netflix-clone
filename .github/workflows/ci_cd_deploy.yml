@@ -1,0 +1,57 @@
+name: CI/CD Deploy
+
+on: 
+  push: 
+    branches: [develop, master]
+
+  workflow_dispatch: 
+
+permissions: 
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Deploy:
+    if: github.ref == 'refs/heads/master'
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Secret vars
+        run: echo "var is API ${{ secrets.VITE_APP_FIREBASE_API_KEY }}"
+      - name: Build
+        run: pnpm run build
+        env:
+          VITE_APP_FIREBASE_API_KEY: ${{ secrets.VITE_APP_FIREBASE_API_KEY }}
+          VITE_APP_FIREBASE_API_AUTH_DOMAIN: ${{ secrets.VITE_APP_FIREBASE_API_AUTH_DOMAIN }}
+          VITE_APP_FIREBASE_API_PROJECT_ID: ${{ secrets.VITE_APP_FIREBASE_API_PROJECT_ID }}
+          VITE_APP_FIREBASE_API_STORAGE_BUCKET: ${{ secrets.VITE_APP_FIREBASE_API_STORAGE_BUCKET }}
+          VITE_APP_FIREBASE_API_MESSAGING: ${{ secrets.VITE_APP_FIREBASE_API_MESSAGING }}
+          VITE_APP_FIREBASE_API_APP_ID: ${{ secrets.VITE_APP_FIREBASE_API_APP_ID }}
+      - name: Set up Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+      - name: Deploy to GitHub Pages
+        id:  deployment
+        uses: actions/deploy-pages@v4
+

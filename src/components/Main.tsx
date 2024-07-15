@@ -5,8 +5,6 @@ import { imageBaseURL } from '@/services/movies'
 import { useEffect, useState } from 'react'
 
 const Main = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [movies, setMovies] = useState([] as Movie[])
   const [randomMovie, setRandomMovie] = useState<Movie>()
 
   useEffect(() => {
@@ -14,7 +12,6 @@ const Main = () => {
       .then(response => {
         const movies: Movie[] = response?.data?.results;
         const random = movies[Math.floor(Math.random() * movies.length)]
-        setMovies(movies)
         setRandomMovie(random)
       })
   }, [])
