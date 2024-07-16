@@ -1,9 +1,11 @@
 import { UserAuth } from '@/core/context/AuthContext'
 import { FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const LogIn = () => {
-  const [email, setEmail] = useState('')
+  const location = useLocation()
+  const { email: emailParam } = location.state || {};
+  const [email, setEmail] = useState(emailParam as string)
   const [password, setPassword] = useState('')
   const { signIn } = UserAuth()
   const navigate = useNavigate()
@@ -12,7 +14,7 @@ const LogIn = () => {
     e.preventDefault()
     try {
       await signIn(email, password)
-      navigate('/')
+      navigate('/account')
     } catch (error) {
       console.log('error', error)
     }
@@ -36,8 +38,17 @@ const LogIn = () => {
               <h1 className="text-3xl  font-bold">Sign In</h1>
 
               <form onSubmit={handleSubmit} className="w-full flex flex-col py-4 gap-5">
-                <input onChange={(e) => setEmail(e.target.value)} className="p-3 my-2 bg-gray-700 rounded" type="email" placeholder="Email" autoComplete="email" />
-                <input onChange={(e) => setPassword(e.target.value)} className="p-3 my-2 bg-gray-700 rounded" type="password" placeholder="Password" autoComplete="current-password" />
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="p-3 my-2 bg-gray-700 rounded" type="email" placeholder="Email" autoComplete="email" value={email} />
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="p-3 my-2 bg-gray-700 rounded"
+                  type="password"
+                  placeholder="Password"
+                  autoComplete="current-password"
+                  value={password}
+                />
                 <button className="bg-red-600 py-3 my-6 rounded font-bold">Sign In</button>
                 <div className="flex justify-between items-center text-sm text-gray-600">
                   <p>
