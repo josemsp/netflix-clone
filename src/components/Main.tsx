@@ -42,7 +42,7 @@ const Main = () => {
               <h3 className="">Ready to watch? Enter your email to create or restart your membership.</h3>
               <div className="flex gap-6 justify-center items-center ">
                 <input
-                  className='h-[2.5rem] max-w-[550px] rounded px-4'
+                  className='h-[2.5rem] max-w-[550px] rounded px-4 text-slate-800'
                   autoComplete="email"
                   placeholder='Email address'
                   minLength={5}
